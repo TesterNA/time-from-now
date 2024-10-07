@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Timestamp Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #E0E0E0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #1E1E1E;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #BB86FC;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="number"], input[type="range"] {
+            width: 100%;
+            margin-top: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background-color: #333;
+            color: #fff;
+        }
+
+        input[type="range"] {
+            background-color: #BB86FC;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            background-color: #BB86FC;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            background-color: #BB86FC;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        button {
+            background-color: #8660b4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #604582;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+        }
+
+        #timestamp {
+            font-weight: bold;
+            color: #BB86FC;
+            background-color: #2C2F33;
+            padding: 3px 6px;
+            border-radius: 5px;
+            font-family: "Courier New", Courier, monospace;
+            display: inline-block;
+        }
+
+        .copy-button {
+            background-color: transparent;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #BB86FC;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .copy-button:hover {
+            color: #7289DA;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .dual-input {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dual-input input {
+            flex: 1;
+        }
+
+        .dual-input input[type="number"] {
+            margin-right: 10px;
+            max-width: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Discord Timestamp Generator</h1>
+
+        <div class="input-group">
+            <label for="days">Days: </label>
+            <div class="dual-input">
+                <input type="number" id="daysInput" value="0" min="0" max="30" oninput="syncInput('days')">
+                <input type="range" id="days" min="0" max="30" value="0" oninput="syncRange('days')">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="hours">Hours: </label>
+            <div class="dual-input">
+                <input type="number" id="hoursInput" value="0" min="0" max="23" oninput="syncInput('hours')">
+                <input type="range" id="hours" min="0" max="23" value="0" oninput="syncRange('hours')">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="minutes">Minutes: </label>
+            <div class="dual-input">
+                <input type="number" id="minutesInput" value="0" min="0" max="59" oninput="syncInput('minutes')">
+                <input type="range" id="minutes" min="0" max="59" value="0" oninput="syncRange('minutes')">
+            </div>
+        </div>
+
+        <button onclick="generateTimestamp()">Generate Timestamp</button>
+
+        <div id="result" style="margin-top: 20px;">
+            <span id="result-text">Timestamp: <code id="timestamp">N/A</code></span>
+            <button class="copy-button" onclick="copyToClipboard()">📋</button>
+        </div>
+    </div>
+
+    <script>
+        function syncInput(id) {
+            const range = document.getElementById(id);
+            const input = document.getElementById(`${id}Input`);
+            if (input.value > range.max) input.value = range.max;
+            if (input.value < range.min) input.value = range.min;
+            range.value = input.value;
+        }
+
+        function syncRange(id) {
+            const range = document.getElementById(id);
+            const input = document.getElementById(`${id}Input`);
+            input.value = range.value;
+        }
+
+        function generateTimestamp() {
+            const days = parseInt(document.getElementById('days').value);
+            const hours = parseInt(document.getElementById('hours').value);
+            const minutes = parseInt(document.getElementById('minutes').value);
+            const currentTime = Math.floor(Date.now() / 1000);
+            const futureTime = currentTime + (days * 86400) + (hours * 3600) + (minutes * 60);
+            const timestamp = `<t:${futureTime}:R>`;
+            document.getElementById('timestamp').innerText = timestamp;
+        }
+
+        function copyToClipboard() {
+            const timestampText = document.getElementById('timestamp').innerText;
+            navigator.clipboard.writeText(timestampText).then(() => {
+                alert('Timestamp copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>
